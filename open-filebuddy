@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# Navigate to the filebuddy directory
+cd /Users/fredcaseyhousand/Desktop/github/filebuddy
+
+# Check if server is already running
+if curl -s http://localhost:3000/api/status > /dev/null 2>&1; then
+    echo "✅ Server is already running!"
+else
+    echo "🚀 Starting FileBuddy server..."
+    # Start the server in background
+    npm run gui > /dev/null 2>&1 &
+    # Wait a moment for server to start
+    sleep 3
+fi
+
+# Open browser
+echo "🌐 Opening FileBuddy in browser..."
+open http://localhost:3000

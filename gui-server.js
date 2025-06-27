@@ -11,6 +11,29 @@ const os = require('os');
 const app = express();
 const PORT = 3000;
 
+// Idle timeout configuration (15 minutes)
+const IDLE_TIMEOUT = 15 * 60 * 1000; // 15 minutes in milliseconds
+let lastActivityTime = Date.now();
+let idleTimer;
+
+// Function to reset idle timer
+function resetIdleTimer() {
+    lastActivityTime = Date.now();
+    if (idleTimer) {
+        clearTimeout(idleTimer);
+    }
+    idleTimer = setTimeout(() => {
+        console.log('⏰ Server has been idle for 15 minutes. Shutting down...');
+        process.exit(0);
+    }, IDLE_TIMEOUT);
+}
+
+// Middleware to track activity
+app.use((req, res, next) => {
+    resetIdleTimer();
+    next();
+});
+
 // Middleware
 app.use(cors());
 app.use(express.json());
@@ -169,8 +192,12 @@ app.listen(PORT, () => {
     console.log(`🔧 API endpoint: http://localhost:${PORT}/api`);
     console.log('💡 Drag & drop files or paste YouTube URLs to convert!');
     console.log('🖥️  Files will be saved to your Desktop automatically');
+    console.log('⏰ Server will auto-shutdown after 15 minutes of inactivity');
     console.log('');
     console.log('Press Ctrl+C to stop the server');
+    
+    // Start the idle timer
+    resetIdleTimer();
 });
 
 // Graceful shutdown
