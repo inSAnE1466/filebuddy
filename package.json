@@ -1,20 +1,29 @@
 {
   "name": "filebuddy",
   "version": "1.0.0",
+  "description": "Your friendly command-line file conversion sidekick",
   "main": "index.js",
+  "bin": {
+    "filebuddy": "./index.js"
+  },
   "scripts": {
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
+  "keywords": ["cli", "converter", "youtube", "mp3", "image", "ffmpeg", "terminal"],
   "author": "",
-  "license": "ISC",
-  "description": "",
+  "license": "MIT",
   "dependencies": {
-    "chalk": "^5.4.1",
+    "@distube/ytdl-core": "^4.14.4",
+    "chalk": "^4.1.2",
+    "cli-progress": "^3.12.0",
     "ffmpeg-static": "^5.2.0",
     "fluent-ffmpeg": "^2.1.2",
+    "inquirer": "^9.2.15",
     "sharp": "^0.34.2",
-    "yargs": "^18.0.0",
-    "ytdl-core": "^4.11.5"
+    "yargs": "^17.7.2"
+  },
+  "engines": {
+    "node": ">=16.0.0"
   }
 }

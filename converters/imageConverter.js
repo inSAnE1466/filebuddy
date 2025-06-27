@@ -1,26 +1,83 @@
-// converters/youtubeConverter.js
-const fs = require('fs');
-const ytdl = require('ytdl-core');
-const ffmpeg = require('fluent-ffmpeg');
-const ffmpegPath = require('ffmpeg-static');
+const sharp = require('sharp');
+const path = require('path');
+const os = require('os');
 
-ffmpeg.setFfmpegPath(ffmpegPath);
-
-const convertYoutubeToMp3 = async (url, outputPath) => {
-    return new Promise(async (resolve, reject) => {
-        const videoInfo = await ytdl.getInfo(url);
-        const title = videoInfo.videoDetails.title.replace(/[<>:"/\\|?*]+/g, '');
-        const finalOutputPath = outputPath || `${title}.mp3`;
-
-        const audioStream = ytdl(url, { filter: 'audioonly', quality: 'highestaudio' });
-
-        ffmpeg(audioStream)
-            .audioBitrate(128)
-            .toFormat('mp3')
-            .on('error', (err) => reject(new Error(`FFMPEG Error: ${err.message}`)))
-            .on('end', () => resolve(finalOutputPath))
-            .save(finalOutputPath);
-    });
+const convertImage = async (inputPath, outputPath, options = {}) => {
+    try {
+        const inputInfo = path.parse(inputPath);
+        
+        // If no output path specified, use Desktop with same name but different extension
+        let finalOutputPath = outputPath;
+        if (!outputPath) {
+            const desktopPath = path.join(os.homedir(), 'Desktop');
+            finalOutputPath = path.join(desktopPath, `${inputInfo.name}.jpg`);
+        }
+        
+        const outputExt = path.extname(finalOutputPath).toLowerCase().slice(1);
+        
+        // Create Sharp instance
+        let sharpInstance = sharp(inputPath);
+        
+        // Apply format-specific options
+        switch (outputExt) {
+            case 'jpg':
+            case 'jpeg':
+                sharpInstance = sharpInstance.jpeg({ 
+                    quality: options.quality || 90,
+                    progressive: true 
+                });
+                break;
+            case 'png':
+                sharpInstance = sharpInstance.png({ 
+                    compressionLevel: options.compression || 6 
+                });
+                break;
+            case 'webp':
+                sharpInstance = sharpInstance.webp({ 
+                    quality: options.quality || 90 
+                });
+                break;
+            case 'avif':
+                sharpInstance = sharpInstance.avif({ 
+                    quality: options.quality || 80 
+                });
+                break;
+            case 'tiff':
+                sharpInstance = sharpInstance.tiff({ 
+                    compression: 'lzw' 
+                });
+                break;
+            case 'gif':
+                // Note: Sharp doesn't support GIF output, would need different library
+                throw new Error('GIF output not supported yet');
+            default:
+                throw new Error(`Unsupported output format: ${outputExt}`);
+        }
+        
+        // Perform conversion
+        await sharpInstance.toFile(finalOutputPath);
+        
+        return {
+            success: true,
+            inputPath,
+            outputPath: finalOutputPath,
+            inputFormat: inputInfo.ext.slice(1),
+            outputFormat: outputExt
+        };
+        
+    } catch (error) {
+        throw new Error(`Image conversion failed: ${error.message}`);
+    }
 };
 
-module.exports = { convertYoutubeToMp3 };
+const getSupportedFormats = () => {
+    return {
+        input: ['jpg', 'jpeg', 'png', 'webp', 'gif', 'tiff', 'avif', 'svg'],
+        output: ['jpg', 'jpeg', 'png', 'webp', 'avif', 'tiff']
+    };
+};
+
+module.exports = { 
+    convertImage, 
+    getSupportedFormats 
+};
