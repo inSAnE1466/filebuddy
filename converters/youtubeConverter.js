@@ -3,6 +3,7 @@ const ffmpeg = require('fluent-ffmpeg');
 const ffmpegPath = require('ffmpeg-static');
 const path = require('path');
 const os = require('os');
+const fs = require('fs');
 
 ffmpeg.setFfmpegPath(ffmpegPath);
 
@@ -15,8 +16,12 @@ const convertYoutubeToMp3 = async (url, outputPath, onProgress) => {
         // Determine final output path
         let finalOutputPath = outputPath;
         if (!outputPath) {
-            const desktopPath = path.join(os.homedir(), 'Desktop');
-            finalOutputPath = path.join(desktopPath, `${title}.mp3`);
+            const musicPath = path.join(os.homedir(), 'Library', 'Mobile Documents', 'com~apple~CloudDocs', '1Misc', 'MUSIC');
+            
+            // Create the directory if it doesn't exist
+            fs.mkdirSync(musicPath, { recursive: true });
+            
+            finalOutputPath = path.join(musicPath, `${title}.mp3`);
         }
         
         return new Promise((resolve, reject) => {
