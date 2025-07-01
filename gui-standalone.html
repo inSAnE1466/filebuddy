@@ -523,6 +523,7 @@
                     <option value="webp">WEBP (Modern)</option>
                     <option value="avif">AVIF (Next-gen)</option>
                     <option value="tiff">TIFF (Archive)</option>
+                    <option value="pdf">PDF (Document)</option>
                 </select>
             </div>
         </div>
@@ -530,8 +531,8 @@
         <div class="drop-zone" id="dropZone">
             <div class="drop-icon">📁</div>
             <div class="drop-text">Drop files here or click to select</div>
-            <div class="drop-subtext">Drag and drop image files for instant conversion</div>
-            <input type="file" id="fileInput" class="file-input" accept="image/*" multiple>
+            <div class="drop-subtext">Drag and drop image files or Word documents for instant conversion</div>
+            <input type="file" id="fileInput" class="file-input" accept="image/*,.doc,.docx" multiple>
         </div>
 
 
@@ -698,10 +699,10 @@
                 queueItem.className = `queue-item ${item.status}`;
                 queueItem.innerHTML = `
                     <div class="queue-item-info">
-                        <div class="queue-item-icon">${item.type === 'youtube' ? '🎵' : '🖼️'}</div>
+                        <div class="queue-item-icon">${item.type === 'youtube' ? '🎵' : (item.outputFormat === 'pdf' ? '📄' : '🖼️')}</div>
                         <div class="queue-item-details">
                             <div class="queue-item-name">${item.name}</div>
-                            <div class="queue-item-type">${item.type === 'youtube' ? 'YouTube → ' + item.outputFormat.toUpperCase() : 'Image → ' + item.outputFormat.toUpperCase()}</div>
+                            <div class="queue-item-type">${item.type === 'youtube' ? 'YouTube → ' + item.outputFormat.toUpperCase() : (item.outputFormat === 'pdf' ? 'Document → PDF' : 'Image → ' + item.outputFormat.toUpperCase())}</div>
                         </div>
                     </div>
                     <div class="queue-item-status ${item.status}">${item.status.charAt(0).toUpperCase() + item.status.slice(1)}</div>

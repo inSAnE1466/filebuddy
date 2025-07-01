@@ -11,7 +11,15 @@
     "gui": "node gui-server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["cli", "converter", "youtube", "mp3", "image", "ffmpeg", "terminal"],
+  "keywords": [
+    "cli",
+    "converter",
+    "youtube",
+    "mp3",
+    "image",
+    "ffmpeg",
+    "terminal"
+  ],
   "author": "",
   "license": "MIT",
   "dependencies": {
@@ -23,7 +31,9 @@
     "ffmpeg-static": "^5.2.0",
     "fluent-ffmpeg": "^2.1.2",
     "inquirer": "^9.2.15",
+    "mammoth": "^1.9.1",
     "multer": "^1.4.5-lts.1",
+    "puppeteer": "^24.11.2",
     "sharp": "^0.34.2",
     "yargs": "^17.7.2"
   },

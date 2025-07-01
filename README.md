@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Your friendly command-line file conversion sidekick. FileBuddy is a simple, powerful, and extensible CLI tool built with Node.js to handle common file conversions, saving you from sketchy websites and cumbersome software.
+FileBuddy is a simple, powerful, and extensible CLI tool built with Node.js to handle common file conversions, saving you from sketchy websites and cumbersome software.
 
 ## The Goal
 

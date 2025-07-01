@@ -108,20 +108,42 @@ app.post('/api/convert/file', upload.single('file'), async (req, res) => {
         
         console.log(`🎯 Converting file: ${originalName} to ${outputFormat}`);
         
-        // Run FileBuddy CLI
-        const result = await runFileBuddyCLI(['convert', inputPath]);
+        // Run FileBuddy CLI with output format
+        let result;
+        let finalOutputPath;
         
-        // Clean up temp file
-        fs.unlinkSync(inputPath);
-        
-        // Extract output path from CLI response
-        const outputMatch = result.stdout.match(/Output: (.+)/);
-        const outputPath = outputMatch ? outputMatch[1].trim() : 'Desktop';
+        if (outputFormat === 'pdf') {
+            // For PDF conversion, rename temp file with proper extension and specify output path
+            const originalExt = path.extname(originalName);
+            const tempFileWithExt = inputPath + originalExt;
+            fs.renameSync(inputPath, tempFileWithExt);
+            
+            const baseName = path.basename(originalName, path.extname(originalName));
+            finalOutputPath = path.join(os.homedir(), 'Desktop', `${baseName}.pdf`);
+            result = await runFileBuddyCLI(['convert', tempFileWithExt, finalOutputPath]);
+            
+            // Clean up renamed temp file
+            fs.unlinkSync(tempFileWithExt);
+        } else {
+            // For image conversion, rename temp file with proper extension
+            const originalExt = path.extname(originalName);
+            const tempFileWithExt = inputPath + originalExt;
+            fs.renameSync(inputPath, tempFileWithExt);
+            
+            result = await runFileBuddyCLI(['convert', tempFileWithExt]);
+            
+            // Clean up renamed temp file
+            fs.unlinkSync(tempFileWithExt);
+            
+            // Extract output path from CLI response
+            const outputMatch = result.stdout.match(/Output: (.+)/);
+            finalOutputPath = outputMatch ? outputMatch[1].trim() : 'Desktop';
+        }
         
         res.json({
             success: true,
             message: 'File converted successfully',
-            outputPath,
+            outputPath: finalOutputPath,
             originalName
         });
         
@@ -129,8 +151,16 @@ app.post('/api/convert/file', upload.single('file'), async (req, res) => {
         console.error('❌ File conversion error:', error.message);
         
         // Clean up temp file if it exists
-        if (req.file && fs.existsSync(req.file.path)) {
-            fs.unlinkSync(req.file.path);
+        if (req.file) {
+            if (fs.existsSync(req.file.path)) {
+                fs.unlinkSync(req.file.path);
+            }
+            // Also try with extension in case it was renamed
+            const originalExt = path.extname(req.file.originalname);
+            const tempFileWithExt = req.file.path + originalExt;
+            if (fs.existsSync(tempFileWithExt)) {
+                fs.unlinkSync(tempFileWithExt);
+            }
         }
         
         res.status(500).send(error.message);

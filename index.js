@@ -4,9 +4,10 @@ const yargs = require('yargs');
 const { hideBin } = require('yargs/helpers');
 const { convertImage } = require('./converters/imageConverter');
 const { convertYoutubeToMp3, getVideoInfo } = require('./converters/youtubeConverter');
+const { convertDocumentToPdf } = require('./converters/documentConverter');
 const { validateInput, logger, createProgressBar, createDownloadProgress } = require('./utils');
 
-const APP_NAME = 'FileBuddy';
+const APP_NAME = 'filebuddy';
 const VERSION = '1.0.0';
 
 // Main conversion function
@@ -30,6 +31,9 @@ const handleConvert = async (input, output) => {
                 break;
             case 'image':
                 result = await handleImageConversion(input, output);
+                break;
+            case 'document':
+                result = await handleDocumentConversion(input, output);
                 break;
             default:
                 logger.error(`Unsupported input type: ${validation.type}`);
@@ -118,9 +122,42 @@ const handleImageConversion = async (inputPath, outputPath) => {
     }
 };
 
+// Handle document conversion
+const handleDocumentConversion = async (inputPath, outputPath) => {
+    try {
+        logger.info('Converting document to PDF...');
+        
+        const progressBar = createProgressBar('Converting');
+        progressBar.start(100, 0);
+        
+        // Simulate progress for document conversion
+        const progressInterval = setInterval(() => {
+            progressBar.increment(15);
+        }, 200);
+        
+        const result = await convertDocumentToPdf(inputPath, outputPath);
+        
+        clearInterval(progressInterval);
+        progressBar.update(100);
+        progressBar.stop();
+        
+        if (result.warnings && result.warnings.length > 0) {
+            logger.info('Conversion warnings:');
+            result.warnings.forEach(warning => {
+                logger.dim(`  - ${warning.message}`);
+            });
+        }
+        
+        return result;
+        
+    } catch (error) {
+        throw new Error(`Document conversion failed: ${error.message}`);
+    }
+};
+
 // Interactive mode
 const handleInteractive = async () => {
-    const inquirer = require('inquirer');
+    const { default: inquirer } = await import('inquirer');
     
     logger.title(`\n=' ${APP_NAME} Interactive Mode`);
     
@@ -220,6 +257,7 @@ yargs(hideBin(process.argv))
     
     .example('$0 convert "https://youtube.com/watch?v=abc123"', 'Convert YouTube video to MP3')
     .example('$0 convert image.png image.jpg', 'Convert PNG to JPG')
+    .example('$0 convert document.docx document.pdf', 'Convert Word document to PDF')
     .example('$0 interactive', 'Start interactive mode')
     .example('$0', 'Start interactive mode (default)')
     

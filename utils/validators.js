@@ -18,9 +18,18 @@ const getSupportedImageFormats = () => {
     return ['jpg', 'jpeg', 'png', 'webp', 'gif', 'tiff', 'avif'];
 };
 
+const getSupportedDocumentFormats = () => {
+    return ['doc', 'docx'];
+};
+
 const isImageFile = (filePath) => {
     const ext = path.extname(filePath).toLowerCase().slice(1);
     return getSupportedImageFormats().includes(ext);
+};
+
+const isDocumentFile = (filePath) => {
+    const ext = path.extname(filePath).toLowerCase().slice(1);
+    return getSupportedDocumentFormats().includes(ext);
 };
 
 const validateInput = (input) => {
@@ -32,6 +41,9 @@ const validateInput = (input) => {
         if (isImageFile(input)) {
             return { type: 'image', valid: true };
         }
+        if (isDocumentFile(input)) {
+            return { type: 'document', valid: true };
+        }
         return { type: 'unknown', valid: false, error: 'Unsupported file format' };
     }
     
@@ -42,6 +54,8 @@ module.exports = {
     isYouTubeUrl,
     isValidFile,
     isImageFile,
+    isDocumentFile,
     getSupportedImageFormats,
+    getSupportedDocumentFormats,
     validateInput
 };
