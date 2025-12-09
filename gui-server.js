@@ -23,7 +23,7 @@ function resetIdleTimer() {
         clearTimeout(idleTimer);
     }
     idleTimer = setTimeout(() => {
-        console.log('⏰ Server has been idle for 15 minutes. Shutting down...');
+        console.log('Server has been idle for 15 minutes. Shutting down...');
         process.exit(0);
     }, IDLE_TIMEOUT);
 }
@@ -50,7 +50,7 @@ const upload = multer({
 // Helper function to run FileBuddy CLI
 function runFileBuddyCLI(args) {
     return new Promise((resolve, reject) => {
-        console.log('🔧 Running FileBuddy CLI:', args.join(' '));
+        console.log('Running FileBuddy CLI:', args.join(' '));
         
         const child = spawn('node', ['./index.js', ...args], {
             stdio: ['pipe', 'pipe', 'pipe'],
@@ -62,12 +62,12 @@ function runFileBuddyCLI(args) {
         
         child.stdout.on('data', (data) => {
             stdout += data.toString();
-            console.log('📤 CLI Output:', data.toString().trim());
+            console.log('CLI Output:', data.toString().trim());
         });
         
         child.stderr.on('data', (data) => {
             stderr += data.toString();
-            console.error('❌ CLI Error:', data.toString().trim());
+            console.error('CLI Error:', data.toString().trim());
         });
         
         child.on('close', (code) => {
@@ -105,8 +105,8 @@ app.post('/api/convert/file', upload.single('file'), async (req, res) => {
         const { outputFormat } = req.body;
         const inputPath = req.file.path;
         const originalName = req.file.originalname;
-        
-        console.log(`🎯 Converting file: ${originalName} to ${outputFormat}`);
+
+        console.log(`Converting file: ${originalName} to ${outputFormat}`);
         
         // Run FileBuddy CLI with output format
         let result;
@@ -148,7 +148,7 @@ app.post('/api/convert/file', upload.single('file'), async (req, res) => {
         });
         
     } catch (error) {
-        console.error('❌ File conversion error:', error.message);
+        console.error('File conversion error:', error.message);
         
         // Clean up temp file if it exists
         if (req.file) {
@@ -175,8 +175,8 @@ app.post('/api/convert/youtube', async (req, res) => {
         if (!url) {
             return res.status(400).send('No URL provided');
         }
-        
-        console.log(`🎵 Converting YouTube URL: ${url} to ${outputFormat}`);
+
+        console.log(`Converting YouTube URL: ${url} to ${outputFormat}`);
         
         // Run FileBuddy CLI
         const result = await runFileBuddyCLI(['convert', url]);
@@ -196,7 +196,7 @@ app.post('/api/convert/youtube', async (req, res) => {
         });
         
     } catch (error) {
-        console.error('❌ YouTube conversion error:', error.message);
+        console.error('YouTube conversion error:', error.message);
         res.status(500).send(error.message);
     }
 });
@@ -208,7 +208,7 @@ app.get('/', (req, res) => {
 
 // Error handling middleware
 app.use((error, req, res, next) => {
-    console.error('🚨 Server error:', error);
+    console.error('Server error:', error);
     res.status(500).json({
         error: 'Internal server error',
         message: error.message
@@ -217,12 +217,12 @@ app.use((error, req, res, next) => {
 
 // Start server
 app.listen(PORT, () => {
-    console.log('🚀 FileBuddy GUI Server started!');
-    console.log(`📱 Open in browser: http://localhost:${PORT}`);
-    console.log(`🔧 API endpoint: http://localhost:${PORT}/api`);
-    console.log('💡 Drag & drop files or paste YouTube URLs to convert!');
-    console.log('🖥️  Files will be saved to your Desktop automatically');
-    console.log('⏰ Server will auto-shutdown after 15 minutes of inactivity');
+    console.log('FileBuddy GUI Server started');
+    console.log(`Open in browser: http://localhost:${PORT}`);
+    console.log(`API endpoint: http://localhost:${PORT}/api`);
+    console.log('Drag & drop files or paste YouTube URLs to convert');
+    console.log('Files will be saved to your Desktop automatically');
+    console.log('Server will auto-shutdown after 15 minutes of inactivity');
     console.log('');
     console.log('Press Ctrl+C to stop the server');
     
@@ -232,11 +232,11 @@ app.listen(PORT, () => {
 
 // Graceful shutdown
 process.on('SIGINT', () => {
-    console.log('\n👋 Shutting down FileBuddy GUI Server...');
+    console.log('\nShutting down FileBuddy GUI Server...');
     process.exit(0);
 });
 
 process.on('SIGTERM', () => {
-    console.log('\n👋 Shutting down FileBuddy GUI Server...');
+    console.log('\nShutting down FileBuddy GUI Server...');
     process.exit(0);
 });

@@ -29,8 +29,6 @@ const convertDocumentToPdf = async (inputPath, outputPath = null) => {
                 method: 'LibreOffice'
             };
         } catch (libreOfficeError) {
-            console.log('LibreOffice conversion failed, falling back to mammoth+puppeteer:', libreOfficeError.message);
-            
             // Fallback to mammoth+puppeteer
             await convertWithMammoth(inputPath, outputPath);
             return {
