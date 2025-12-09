@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🔧 FileBuddy - Drag & Drop Converter</title>
+    <title>FileBuddy - Drag & Drop Converter</title>
     <style>
         * {
             margin: 0;
@@ -505,13 +505,13 @@
     
     <!-- YouTube Corner Widget -->
     <div class="youtube-widget">
-        <h3>🎵 YouTube to MP3</h3>
+        <h3>YouTube to MP3</h3>
         <input type="text" id="youtubeUrlInput" class="url-input" placeholder="Paste YouTube URL here..." />
         <button class="convert-btn" id="youtubeConvertBtn">Download MP3</button>
     </div>
     
     <div class="container">
-        <h1 class="title">🔧 FileBuddy</h1>
+        <h1 class="title">FileBuddy</h1>
         <p class="subtitle">Your friendly drag & drop file converter</p>
         
         <div class="format-selectors">
@@ -699,7 +699,7 @@
                 queueItem.className = `queue-item ${item.status}`;
                 queueItem.innerHTML = `
                     <div class="queue-item-info">
-                        <div class="queue-item-icon">${item.type === 'youtube' ? '🎵' : (item.outputFormat === 'pdf' ? '📄' : '🖼️')}</div>
+                        <div class="queue-item-icon">${item.type === 'youtube' ? 'YT' : (item.outputFormat === 'pdf' ? 'PDF' : 'IMG')}</div>
                         <div class="queue-item-details">
                             <div class="queue-item-name">${item.name}</div>
                             <div class="queue-item-type">${item.type === 'youtube' ? 'YouTube → ' + item.outputFormat.toUpperCase() : (item.outputFormat === 'pdf' ? 'Document → PDF' : 'Image → ' + item.outputFormat.toUpperCase())}</div>
@@ -749,10 +749,10 @@
             hideProgress();
             
             if (successCount > 0) {
-                showSuccess(`🎉 Successfully converted ${successCount} item(s)! Images saved to Desktop, Music to Desktop/Misc/MUSIC/`);
+                showSuccess(`Successfully converted ${successCount} item(s)! Files saved to Desktop`);
             }
             if (errorCount > 0) {
-                showError(`❌ ${errorCount} item(s) failed to convert.`);
+                showError(`${errorCount} item(s) failed to convert.`);
             }
         }
         
@@ -817,14 +817,14 @@
                     
                     if (response.ok) {
                         const result = await response.json();
-                        updateProgress(100, `✅ ${file.name} converted!`);
-                        showSuccess(`🎉 Successfully converted ${file.name} to Desktop!`);
+                        updateProgress(100, `${file.name} converted!`);
+                        showSuccess(`Successfully converted ${file.name} to Desktop!`);
                     } else {
                         const error = await response.text();
                         throw new Error(`Failed to convert ${file.name}: ${error}`);
                     }
                 } catch (error) {
-                    showError(`❌ ${error.message}`);
+                    showError(`${error.message}`);
                 } finally {
                     isProcessing = false;
                     hideProgress();
@@ -865,15 +865,15 @@
                 
                 if (response.ok) {
                     const result = await response.json();
-                    updateProgress(100, '✅ YouTube video converted!');
-                    showSuccess(`🎵 Successfully downloaded: "${result.title}" to iCloud/1Misc/MUSIC/`);
+                    updateProgress(100, 'YouTube video converted!');
+                    showSuccess(`Successfully downloaded: "${result.title}" to Desktop`);
                     youtubeUrlInput.value = '';
                 } else {
                     const error = await response.text();
                     throw new Error(error);
                 }
             } catch (error) {
-                showError(`❌ YouTube conversion failed: ${error.message}`);
+                showError(`YouTube conversion failed: ${error.message}`);
             } finally {
                 isProcessing = false;
                 hideProgress();
